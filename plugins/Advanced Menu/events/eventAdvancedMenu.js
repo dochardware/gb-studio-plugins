@@ -1,6 +1,6 @@
-const id = "PT_EVENT_ADVANCED_MENU";
+const id = "PT_EVENT_ADVANCED_MENU_2";
 const groups = ["Plugin Pak", "EVENT_GROUP_DIALOGUE"];
-const name = "Display Advanced Menu";
+const name = "Display Advanced Menu 2.0";
 
 const MAX_OPTIONS = 16;
 
@@ -12,7 +12,7 @@ const fields = [].concat(
   [
     {
       key: "variable",
-      label: "Set Variable",
+      label: "Select a Variable",
       type: "variable",
       defaultValue: "LAST_VARIABLE",
     },
@@ -21,16 +21,20 @@ const fields = [].concat(
       type: "tabs",
       defaultValue: "items",
       values: {
-        items: "Items",
+        items: "Options",
         text: "Layout",
-      },
+        },
+       
+    
+       
     },
+      
   ],
   // Layout tab
   [
     {
       key: `width`,
-      label: "Width",
+      label: "Box Width (tiles)",
       type: "number",
       min: 1,
       max: 20,
@@ -41,11 +45,12 @@ const fields = [].concat(
           key: "__scriptTabs",
           in: ["text"],
         },
+        
       ],
     },
     {
       key: `height`,
-      label: "Height",
+      label: "Box Height (tiles)",
       type: "number",
       min: 1,
       max: 18,
@@ -59,14 +64,13 @@ const fields = [].concat(
       ],
     },
     {
-      key: `from`,
-      label: "Appear from",
-      type: "select",
-      options: [
-        ["bottom", "↑ Bottom"],
-        ["right", "← Right"],
-      ],
-      defaultValue: "bottom",
+      key: `boxX`,
+      label: "Box Position X (tiles)",
+      type: "number",
+      min: 1,
+      max: 20,
+      width: "25%",
+      defaultValue: 4,
       conditions: [
         {
           key: "__scriptTabs",
@@ -74,9 +78,63 @@ const fields = [].concat(
         },
       ],
     },
+    {
+      key: `boxY`,
+      label: "Box Position Y (tiles)",
+      type: "number",
+      min: 1,
+      max: 18,
+      width: "25%",
+      defaultValue: 6,
+      conditions: [
+        {
+          key: "__scriptTabs",
+          in: ["text"],
+        },
+      ],
+    },
+    {
+      key: `showBorder`,
+      label: "Show Border",
+      type: "checkbox",
+      defaultValue: true,
+      width: "50%",
+      conditions: [
+        {
+          key: "__scriptTabs",
+          in: ["text"],
+            },
+          ],
+    },
+    {
+      key: `clearPrevious`,
+      label: "Clear Previous Content",
+      type: "checkbox",
+      defaultValue: true,
+      width: "50%",
+      conditions: [
+          {
+            key: "__scriptTabs",
+            in: ["text"],
+          },
+                  ],
+    },
+    {
+      key: `showActors`,
+      label: "Show Actors",
+      type: "checkbox",
+      defaultValue: false,
+      width: "50%",
+      conditions: [
+          {
+            key: "__scriptTabs",
+            in: ["text"],
+          },
+                  ],
+    },
   ],
   // Items tab
-  [
+  [ 
     {
       key: "items",
       label: "Number of options",
@@ -91,6 +149,7 @@ const fields = [].concat(
         },
       ],
     },
+      
     {
       type: "break",
       conditions: [
@@ -98,6 +157,7 @@ const fields = [].concat(
           key: "__scriptTabs",
           in: ["items"],
         },
+        
       ],
     },
     ...Array(MAX_OPTIONS)
@@ -112,16 +172,32 @@ const fields = [].concat(
                 key: "items",
                 gte: idx,
               },
+              
+              
+                        ],
+          },
+          {
+            key: `__collapseCase$${idx}`,
+            label: `Option ${idx}`,
+            conditions: [
               {
-                key: "__scriptTabs",
-                in: ["items"],
+                key: "items",
+                gte: idx,
               },
-            ],
+              {
+          key: "__scriptTabs",
+          in: ["items"],
+        },
+              ],
+              type: "collapsable",
+              defaultValue: false,
+      
+      
           },
           {
             key: `option_${idx}_text`,
             type: "text",
-            label: `Set to '${idx}' if`,
+            label: `Set variable to '${idx}' if`,
             placeholder: `Item ${idx}`,
             defaultValue: "",
             flexBasis: "100%",
@@ -134,11 +210,15 @@ const fields = [].concat(
                 key: "__scriptTabs",
                 in: ["items"],
               },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
+              },
             ],
           },
           {
             key: `option${idx}_x`,
-            label: "X",
+            label: "Text X Position (tiles)",
             type: "number",
             min: 0,
             max: 20,
@@ -153,11 +233,15 @@ const fields = [].concat(
                 key: "__scriptTabs",
                 in: ["items"],
               },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
+              },
             ],
           },
           {
             key: `option${idx}_y`,
-            label: "Y",
+            label: "Text Y Position (tiles)",
             type: "number",
             min: 0,
             max: 18,
@@ -172,6 +256,10 @@ const fields = [].concat(
                 key: "__scriptTabs",
                 in: ["items"],
               },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
+              },
             ],
           },
           {
@@ -185,11 +273,15 @@ const fields = [].concat(
                 key: "__scriptTabs",
                 in: ["items"],
               },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
+              },
             ],
           },
           {
             key: `option${idx}_l`,
-            label: "On Left move to",
+            label: "On Left select option",
             type: "number",
             min: 0,
             max: MAX_OPTIONS,
@@ -203,12 +295,16 @@ const fields = [].concat(
               {
                 key: "__scriptTabs",
                 in: ["items"],
+              },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
               },
             ],
           },
           {
             key: `option${idx}_r`,
-            label: "On Right move to",
+            label: "On Right select option",
             type: "number",
             min: 0,
             max: MAX_OPTIONS,
@@ -222,12 +318,16 @@ const fields = [].concat(
               {
                 key: "__scriptTabs",
                 in: ["items"],
+              },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
               },
             ],
           },
           {
             key: `option${idx}_u`,
-            label: "On Up move to",
+            label: "On Up select option",
             type: "number",
             min: 0,
             max: MAX_OPTIONS,
@@ -241,12 +341,16 @@ const fields = [].concat(
               {
                 key: "__scriptTabs",
                 in: ["items"],
+              },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
               },
             ],
           },
           {
             key: `option${idx}_d`,
-            label: "On Down move to",
+            label: "On Down select option",
             type: "number",
             min: 0,
             max: MAX_OPTIONS,
@@ -261,16 +365,23 @@ const fields = [].concat(
                 key: "__scriptTabs",
                 in: ["items"],
               },
+              {
+                key: `__collapseCase$${idx}`,
+                ne: true,
+              },
             ],
-          }
+          },
+          
         );
         return arr;
       }, []),
-  ]
+  ],
+  
 );
 
 const compile = (input, helpers) => {
   const {
+    appendRaw,
     _addComment,
     _overlayMoveTo,
     _loadStructuredText,
@@ -279,8 +390,11 @@ const compile = (input, helpers) => {
     _choice,
     _menuItem,
     _displayText,
+    _boxX,
+    _boxY,
     getVariableAlias,
     _addNL,
+    _showActorsOnOverlay,
   } = helpers;
 
   let str = "";
@@ -300,34 +414,65 @@ const compile = (input, helpers) => {
       }
     });
 
-  const menuWidth = input.width || 20;
+  const menuWidth = input.width || 7;
   const menuHeight = input.height || 5;
-
+  const boxX = input.boxX || 6;
+  const boxY = input.boxY || 4;
+  const showActors = input.showActors;
   const variableAlias = getVariableAlias(input.variable);
+  const showBorder = input.showBorder;
 
-  const initialPosition = {
-    x: input.from === "right" ? 20 : 20 - menuWidth,
-    y: input.from === "right" ? 18 - menuHeight : 18,
-  };
 
-  const speedIn = `.OVERLAY_IN_SPEED`;
-  const speedOut = `.OVERLAY_OUT_SPEED`;
+  const speedIn = `.OVERLAY_SPEED_INSTANT`;
+  const speedOut = `.OVERLAY_SPEED_INSTANT`;
 
   const instantTextSpeedCode = `\\001\\1`;
+  
 
   _addComment("Advanced Menu");
 
-  _overlayMoveTo(
-    initialPosition.x,
-    initialPosition.y,
-    ".OVERLAY_SPEED_INSTANT"
-  );
+if (input.clearPrevious) {
+appendRaw(`; Copy the background tiles to the overlay
+                                    VM_PUSH_CONST 0
+                                    VM_PUSH_CONST 0
+                                    VM_GET_INT16  .ARG1, _scroll_x
+                                    VM_GET_INT16  .ARG0, _scroll_y      
+
+                                    VM_RPN
+                                      .R_INT8 0
+                                      .R_INT8 0
+                                      .R_INT8 20
+                                      .R_INT8 18
+
+                                      .R_INT8 0
+                                      .R_REF  .ARG1
+                                      .R_INT16 8
+                                      .R_OPERATOR  .DIV
+                                      .R_OPERATOR .MAX
+
+                                      .R_INT8 0
+                                      .R_REF  .ARG0
+                                      .R_INT16 8
+                                      .R_OPERATOR  .DIV
+                                      .R_OPERATOR .MAX
+
+                                      .R_STOP
+
+                                    VM_OVERLAY_SET_SUBMAP_EX  .ARG5
+
+                                    VM_POP  8
+                                    `);
+                               }
+appendRaw(`VM_SET_CONST_UINT8 _show_actors_on_overlay, ${input.showActors ? 1 : 0}`);
+  _overlayMoveTo(0,0,".OVERLAY_SPEED_INSTANT");
 
   _loadStructuredText(`${instantTextSpeedCode}${str}`);
 
-  _overlayClear(0, 0, menuWidth, menuHeight, ".UI_COLOR_WHITE", true);
+  _overlayClear(boxX, boxY, menuWidth, menuHeight, ".UI_COLOR_WHITE", input.showBorder
+      );
+  
 
-  _overlayMoveTo(20 - menuWidth, 18 - menuHeight, speedIn);
+  _overlayMoveTo(0, 0, speedIn);
 
   _displayText();
 
@@ -351,11 +496,13 @@ const compile = (input, helpers) => {
       _menuItem(fieldX, fieldY, left, right, up, down);
     });
 
-  _overlayMoveTo(initialPosition.x, initialPosition.y, speedOut);
+  _overlayMoveTo(0, 0, speedOut);
   _overlayWait(true, [".UI_WAIT_WINDOW", ".UI_WAIT_TEXT"]);
 
   _overlayMoveTo(0, 18, ".OVERLAY_SPEED_INSTANT");
 
+//disable sprites on overlay when menu closes
+appendRaw(`VM_SET_CONST_UINT8 _show_actors_on_overlay, 0`);
   _addNL();
 };
 
